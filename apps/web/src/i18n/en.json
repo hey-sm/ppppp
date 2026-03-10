@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "home": "Home",
+    "uiLab": "UI Lab",
+    "dashboard": "Dashboard",
+    "brand": "fluxp"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "sidebar": {
+    "navigation": "Navigation",
+    "colorScale": "Color Scale",
+    "hint": "Click to expand sidebar"
+  },
+  "home": {
+    "skipTyping": "Skip",
+    "heroTitle": "Welcome to fluxp",
+    "heroSubtitle": "Swipe through color cards"
+  },
+  "uiLab": {
+    "title": "UI Lab",
+    "subtitle": "Custom components from @fluxp/ui — click cards to see live demos",
+    "liveDemo": "Live Demo",
+    "virtualList": {
+      "name": "Virtual Scroll List",
+      "description": "Efficiently render 10,000+ items — only visible DOM nodes are rendered",
+      "demoHint": "Rendering 10,000 items — only ~20 DOM nodes are actually rendered"
+    },
+    "dynamicForm": {
+      "name": "Dynamic Form",
+      "description": "JSON Schema-driven dynamic form — config-based field generation with built-in validation",
+      "demoHint": "This form is driven by JSON Schema, supporting multiple field types and validation rules"
+    },
+    "schedule": {
+      "name": "Schedule Selector",
+      "description": "7×24 hour time-slot picker for ad delivery, cron tasks, etc. Supports mouse drag to batch-select",
+      "demoHint": "Drag to select time slots, drag again to deselect",
+      "selectedOutput": "Selected time slot data",
+      "clear": "Clear"
+    },
+    "tags": {
+      "perfOptimization": "Performance",
+      "virtualScroll": "Virtual Scroll",
+      "domReuse": "DOM Reuse",
+      "formEngine": "Form Engine",
+      "schemaDriven": "Schema Driven",
+      "dataValidation": "Validation",
+      "adSchedule": "Ad Schedule",
+      "dragSelect": "Drag Select",
+      "weeklyGrid": "Weekly Grid"
+    },
+    "form": {
+      "username": "Username",
+      "usernamePlaceholder": "Enter username",
+      "usernameError": "Username must be 2-20 characters",
+      "email": "Email",
+      "emailError": "Please enter a valid email address",
+      "age": "Age",
+      "role": "Role",
+      "roleAdmin": "Admin",
+      "roleDeveloper": "Developer",
+      "roleGuest": "Guest",
+      "bio": "Bio",
+      "bioPlaceholder": "Tell us about yourself...",
+      "agree": "Agree to Terms of Service",
+      "agreeError": "You must agree to the terms",
+      "submit": "Submit"
+    }
+  },
+  "dashboard": {
+    "title": "Performance Dashboard",
+    "subtitle": "Real-time metrics powered by",
+    "memoryTitle": "Memory Usage",
+    "usedHeap": "Used Heap",
+    "totalHeap": "Total Heap",
+    "heapLimit": "Heap Limit",
+    "renderBattle": "Render Battle",
+    "items": "items",
+    "normal": "Normal",
+    "virtual": "Virtual",
+    "modeNormal": "Normal Rendering (all DOM)",
+    "modeVirtual": "Virtual List (visible area only)",
+    "longTasks": "Long Tasks",
+    "detected": "detected",
+    "good": "Good",
+    "needsImprovement": "Needs Improvement",
+    "poor": "Poor"
+  },
+  "devtools": {
+    "title": "DevTools",
+    "clear": "Clear",
+    "close": "Close (Triple Shift to reopen)",
+    "waitingLogs": "Waiting for log data... Click around, switch routes to see logs"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "fluxp-monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint:fix": "turbo lint:fix"
+  },
+  "devDependencies": {
+    "@oxfmt/binding-win32-x64-msvc": "0.37.0",
+    "@oxlint/binding-win32-x64-msvc": "1.52.0",
+    "oxfmt": "^0.37.0",
+    "oxlint": "^1.2.0",
+    "turbo": "^2.4.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "packageManager": "pnpm@10.30.3"
+}

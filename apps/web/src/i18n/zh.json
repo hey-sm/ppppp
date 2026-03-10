@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "home": "首页",
+    "uiLab": "组件实验室",
+    "dashboard": "性能大盘",
+    "brand": "fluxp"
+  },
+  "theme": {
+    "light": "浅色",
+    "dark": "深色",
+    "system": "跟随系统"
+  },
+  "sidebar": {
+    "navigation": "导航",
+    "colorScale": "色阶",
+    "hint": "点击展开侧边栏"
+  },
+  "home": {
+    "skipTyping": "跳过",
+    "heroTitle": "Welcome to fluxp",
+    "heroSubtitle": "滑动浏览色卡"
+  },
+  "uiLab": {
+    "title": "组件实验室",
+    "subtitle": "来自 @fluxp/ui 的自研组件展示，点击卡片查看在线演示",
+    "liveDemo": "在线演示",
+    "virtualList": {
+      "name": "虚拟滚动列表",
+      "description": "高效渲染 10,000+ 条数据，只渲染可视区域内的 DOM 节点",
+      "demoHint": "渲染 10,000 条数据，观察滚动流畅度 — 实际只渲染约 20 个 DOM 节点"
+    },
+    "dynamicForm": {
+      "name": "动态表单",
+      "description": "JSON Schema 驱动的动态表单 — 配置化生成表单字段，内置多规则验证",
+      "demoHint": "以下表单由 JSON Schema 驱动，支持多种字段类型和校验规则"
+    },
+    "schedule": {
+      "name": "排期选择器",
+      "description": "7×24 小时时间段选择器，适用于广告投放、定时任务等场景，支持鼠标拖拽批量选择",
+      "demoHint": "拖动鼠标选择时间段，再次拖动可取消选择",
+      "selectedOutput": "已选时间段数据",
+      "clear": "清空选择"
+    },
+    "tags": {
+      "perfOptimization": "性能优化",
+      "virtualScroll": "虚拟滚动",
+      "domReuse": "DOM 复用",
+      "formEngine": "表单引擎",
+      "schemaDriven": "Schema 驱动",
+      "dataValidation": "数据校验",
+      "adSchedule": "广告排期",
+      "dragSelect": "拖拽选择",
+      "weeklyGrid": "周视图"
+    },
+    "form": {
+      "username": "用户名",
+      "usernamePlaceholder": "请输入用户名",
+      "usernameError": "用户名需要 2-20 个字符",
+      "email": "邮箱",
+      "emailError": "请输入有效的邮箱地址",
+      "age": "年龄",
+      "role": "角色",
+      "roleAdmin": "管理员",
+      "roleDeveloper": "开发者",
+      "roleGuest": "访客",
+      "bio": "个人简介",
+      "bioPlaceholder": "简单介绍一下自己...",
+      "agree": "同意服务条款",
+      "agreeError": "请同意服务条款",
+      "submit": "提交"
+    }
+  },
+  "dashboard": {
+    "title": "性能监控大盘",
+    "subtitle": "实时性能指标，数据来自",
+    "memoryTitle": "内存使用",
+    "usedHeap": "已用堆内存",
+    "totalHeap": "总堆内存",
+    "heapLimit": "堆上限",
+    "renderBattle": "渲染性能对比",
+    "items": "条数据",
+    "normal": "普通渲染",
+    "virtual": "虚拟渲染",
+    "modeNormal": "普通渲染 (渲染所有 DOM)",
+    "modeVirtual": "虚拟列表 (仅渲染可见区域)",
+    "longTasks": "长任务",
+    "detected": "已检测到",
+    "good": "良好",
+    "needsImprovement": "待优化",
+    "poor": "较差"
+  },
+  "devtools": {
+    "title": "开发工具",
+    "clear": "清空",
+    "close": "关闭（三次 Shift 重新打开）",
+    "waitingLogs": "等待日志数据...在页面上点击、切换路由即可看到日志"
+  }
+}
