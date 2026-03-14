@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
 import { useSession } from "@/hooks/useSession"
-import type { CategoryRow, LinkRow, QueryData, LinkDraft } from "./types"
+import type { LinkRow, QueryData, LinkDraft } from "./types"
 
 const QUERY_KEY = "links-page" as const
 
@@ -109,13 +109,17 @@ export function useLinksData() {
     }
   }
 
-  async function updateLink(linkId: string, draft: { title: string; url: string; note: string | null }) {
+  async function updateLink(
+    linkId: string,
+    draft: { title: string; url: string; note: string | null },
+  ) {
+    const note = (draft.note ?? "").trim()
     const { data: updated, error } = await supabase
       .from("links")
       .update({
         title: draft.title.trim(),
         url: draft.url.trim(),
-        note: draft.note.trim() || null,
+        note: note || null,
       })
       .eq("id", linkId)
       .select("*")

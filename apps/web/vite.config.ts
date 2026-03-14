@@ -7,7 +7,7 @@ import tailwindcss from '@tailwindcss/vite'
 // @tailwindcss/vite 是 Tailwind CSS v4 的 Vite 插件
 // resolve.alias 配置 @/ 路径别名，shadcn/ui 组件依赖此别名
 export default defineConfig(({ command }) => {
-  const devAliases =
+  const devAliases: Record<string, string> =
     command === 'serve'
       ? {
           // Dev-only: point workspace package imports to source for HMR.

@@ -83,15 +83,16 @@ export function UserBadge({
   onSignOut,
   busy,
 }: {
-  email: string
+  email?: string | null
   onSignOut: () => void
   busy: boolean
 }) {
+  const displayEmail = email ?? "未设置邮箱"
   return (
     <div className="flex items-center justify-between gap-3 rounded-xl border bg-card px-4 py-3 text-sm">
       <div>
         <div className="text-xs text-muted-foreground">已登录</div>
-        <div className="truncate font-medium">{email}</div>
+        <div className="truncate font-medium">{displayEmail}</div>
       </div>
       <Button variant="outline" size="sm" onClick={onSignOut} disabled={busy}>
         <LogOut />

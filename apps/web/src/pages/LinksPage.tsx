@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, type FormEvent } from "react"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -48,7 +48,7 @@ export function LinksPage() {
   const canEdit = Boolean(session)
   const displayError = error?.message ?? mutationError
 
-  async function handleAddCategory(e: React.FormEvent) {
+  async function handleAddCategory(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!session || !newCategory.trim()) return
     setActionBusy("add-category")
@@ -164,7 +164,7 @@ export function LinksPage() {
     setActionBusy(`add-link:${categoryId}`)
     setMutationError(null)
     try {
-      await addLink(session.user.id, categoryId, { title, url, note: note || null })
+      await addLink(session.user.id, categoryId, { title, url, note })
       setDrafts((prev) => ({ ...prev, [categoryId]: emptyDraft }))
     } catch (err) {
       setMutationError(err instanceof Error ? err.message : "添加失败")
