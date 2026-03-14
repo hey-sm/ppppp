@@ -7,7 +7,6 @@
 //   每张卡片根据与 active 的偏移量 (signedOffset) 计算：
 //   - x 位移（水平扇开）、rotateZ（旋转角度）、rotateX（倾斜）
 //   - scale（缩放）、y（下沉）、translateZ（纵深）
-//   超出 maxVisible 范围的卡片不渲染（return null）。
 //
 // 动画引擎：
 //   framer-motion spring 弹簧动画，天然支持**动画中断**——
@@ -15,70 +14,70 @@
 //   活跃卡片用高 stiffness / 低 mass（快速到位），
 //   背景卡片用低 stiffness / 高 damping（柔和跟随，形成层次感）。
 //
-// 快速点击不卡顿的三个关键：
-//   1. 函数式 setState：prev/next 用 setActive(cur => ...) 而非闭包值，
-//      React 批量更新时每次都基于最新 state，不吃操作。
-//   2. 方向点击：非活跃卡片 onClick 只看 offset 正负调 next/prev，
-//      不跳到具体索引，避免动画中点到"逻辑上已变 active"的旧卡片。
-//   3. 事件穿透：活跃卡片 pointer-events:none，点击穿透到后方卡片，
-//      即使新 active 卡片视觉上还在飞过来也不会拦截事件。
+// 交互模型（视觉层与交互层分离）：
+//   卡片纯展示，不挂任何点击事件，不受 z-index 遮挡影响。
+//   点击由容器统一处理：根据点击位置与容器中心的关系判断方向。
+//   - 点击左半区 → prev()
+//   - 点击右半区 → next()
+//   - 死区（中间卡片宽度范围内） → 不切换
+//   函数式 setState 保证快速连点每次都基于最新 state，不丢操作。
 //
 // z-index 策略：
 //   活跃卡片直接设 200（非动画属性，React 渲染即生效），
 //   其余卡片 100 - abs(offset)，保证切换瞬间层级正确。
 // ============================================================================
 
-import * as React from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { SquareArrowOutUpRight } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import * as React from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { SquareArrowOutUpRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export type CardStackItem = {
-  id: string | number
-  title: string
-  description?: string
-  imageSrc?: string
-  href?: string
-  ctaLabel?: string
-  tag?: string
-}
+  id: string | number;
+  title: string;
+  description?: string;
+  imageSrc?: string;
+  href?: string;
+  ctaLabel?: string;
+  tag?: string;
+};
 
 export type CardStackProps<T extends CardStackItem> = {
-  items: T[]
-  initialIndex?: number
-  maxVisible?: number
-  cardWidth?: number
-  cardHeight?: number
-  overlap?: number
-  spreadDeg?: number
-  perspectivePx?: number
-  depthPx?: number
-  tiltXDeg?: number
-  activeLiftPx?: number
-  activeScale?: number
-  inactiveScale?: number
-  springStiffness?: number
-  springDamping?: number
-  loop?: boolean
-  autoAdvance?: boolean
-  intervalMs?: number
-  pauseOnHover?: boolean
-  showDots?: boolean
-  className?: string
-  onChangeIndex?: (index: number, item: T) => void
-  renderCard?: (item: T, state: { active: boolean }) => React.ReactNode
-}
+  items: T[];
+  initialIndex?: number;
+  maxVisible?: number;
+  cardWidth?: number;
+  cardHeight?: number;
+  overlap?: number;
+  spreadDeg?: number;
+  perspectivePx?: number;
+  depthPx?: number;
+  tiltXDeg?: number;
+  activeLiftPx?: number;
+  activeScale?: number;
+  inactiveScale?: number;
+  springStiffness?: number;
+  springDamping?: number;
+  loop?: boolean;
+  autoAdvance?: boolean;
+  intervalMs?: number;
+  pauseOnHover?: boolean;
+  showDots?: boolean;
+  className?: string;
+  onChangeIndex?: (index: number, item: T) => void;
+  renderCard?: (item: T, state: { active: boolean }) => React.ReactNode;
+};
 
 function wrapIndex(n: number, len: number) {
-  if (len <= 0) return 0
-  return ((n % len) + len) % len
+  if (len <= 0) return 0;
+  return ((n % len) + len) % len;
 }
 
 function signedOffset(i: number, active: number, len: number, loop: boolean) {
-  const raw = i - active
-  if (!loop || len <= 1) return raw
-  const alt = raw > 0 ? raw - len : raw + len
-  return Math.abs(alt) < Math.abs(raw) ? alt : raw
+  const raw = i - active;
+  if (!loop || len <= 1) return raw;
+  const alt = raw > 0 ? raw - len : raw + len;
+  return Math.abs(alt) < Math.abs(raw) ? alt : raw;
 }
 
 export function CardStack<T extends CardStackItem>({
@@ -106,185 +105,177 @@ export function CardStack<T extends CardStackItem>({
   onChangeIndex,
   renderCard,
 }: CardStackProps<T>) {
-  const reduceMotion = useReducedMotion()
-  const len = items.length
+  const reduceMotion = useReducedMotion();
+  const len = items.length;
 
-  const [active, setActive] = React.useState(() => wrapIndex(initialIndex, len))
-  const [hovering, setHovering] = React.useState(false)
-
-  React.useEffect(() => {
-    setActive((a) => wrapIndex(a, len))
-  }, [len])
+  const [active, setActive] = React.useState(() =>
+    wrapIndex(initialIndex, len),
+  );
+  const [hovering, setHovering] = React.useState(false);
 
   React.useEffect(() => {
-    if (!len) return
-    onChangeIndex?.(active, items[active]!)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active])
+    setActive((a) => wrapIndex(a, len));
+  }, [len]);
 
-  const maxOffset = Math.max(0, Math.floor(maxVisible / 2))
-  const cardSpacing = Math.max(10, Math.round(cardWidth * (1 - overlap)))
-  const stepDeg = maxOffset > 0 ? spreadDeg / maxOffset : 0
+  const onChangeRef = React.useRef(onChangeIndex);
+  onChangeRef.current = onChangeIndex;
 
-  // ── 函数式更新：每次调用都基于最新 state，快速连点不会吃掉操作 ──
+  React.useEffect(() => {
+    if (!len) return;
+    onChangeRef.current?.(active, items[active]!);
+  }, [active, len, items]);
+
+  const maxOffset = Math.max(0, Math.floor(maxVisible / 2));
+  const cardSpacing = Math.max(10, Math.round(cardWidth * (1 - overlap)));
+  const stepDeg = maxOffset > 0 ? spreadDeg / maxOffset : 0;
+
+  const visibleCards = React.useMemo(
+    () =>
+      items
+        .map((item, i) => ({
+          item,
+          i,
+          off: signedOffset(i, active, len, loop),
+        }))
+        .filter(({ off }) => Math.abs(off) <= maxOffset),
+    [items, active, len, loop, maxOffset],
+  );
+
   const goToIndex = React.useCallback(
     (newIndex: number) => {
-      if (!len) return
-      setActive(wrapIndex(newIndex, len))
+      if (!len) return;
+      setActive(wrapIndex(newIndex, len));
     },
     [len],
-  )
+  );
 
   const prev = React.useCallback(() => {
     setActive((cur) => {
-      if (!loop && cur <= 0) return cur
-      return wrapIndex(cur - 1, len)
-    })
-  }, [loop, len])
+      if (!loop && cur <= 0) return cur;
+      return wrapIndex(cur - 1, len);
+    });
+  }, [loop, len]);
 
   const next = React.useCallback(() => {
     setActive((cur) => {
-      if (!loop && cur >= len - 1) return cur
-      return wrapIndex(cur + 1, len)
-    })
-  }, [loop, len])
+      if (!loop && cur >= len - 1) return cur;
+      return wrapIndex(cur + 1, len);
+    });
+  }, [loop, len]);
+
+  // ── 容器级点击：交互层与视觉层分离，不受卡片 z-index 影响 ──
+  const onContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const dx = e.clientX - centerX;
+    const deadZone = cardWidth / 2;
+    if (dx < -deadZone) prev();
+    else if (dx > deadZone) next();
+  };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowLeft') prev()
-    if (e.key === 'ArrowRight') next()
-  }
+    if (e.key === "ArrowLeft") prev();
+    if (e.key === "ArrowRight") next();
+  };
 
   React.useEffect(() => {
-    if (!autoAdvance || reduceMotion || !len) return
-    if (pauseOnHover && hovering) return
-    const id = window.setInterval(
-      () => {
-        if (loop || active < len - 1) {
-          goToIndex(active + 1)
-        }
-      },
-      Math.max(700, intervalMs),
-    )
-    return () => window.clearInterval(id)
-  }, [autoAdvance, intervalMs, hovering, pauseOnHover, reduceMotion, len, loop, active, goToIndex])
+    if (!autoAdvance || reduceMotion || !len) return;
+    if (pauseOnHover && hovering) return;
+    const id = window.setInterval(() => next(), Math.max(700, intervalMs));
+    return () => window.clearInterval(id);
+  }, [
+    autoAdvance,
+    intervalMs,
+    hovering,
+    pauseOnHover,
+    reduceMotion,
+    len,
+    next,
+  ]);
 
-  if (!len) return null
+  if (!len) return null;
 
-  const activeItem = items[active]!
+  const activeItem = items[active]!;
 
   return (
     <div
-      className={cn('w-full', className)}
+      className={cn("w-full", className)}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
     >
       <div
-        className="relative w-full"
+        className="relative w-full  cursor-pointer"
         style={{ height: Math.max(380, cardHeight + 80) }}
         tabIndex={0}
+        onClick={onContainerClick}
         onKeyDown={onKeyDown}
       >
         <div
           className="absolute inset-0 flex items-end justify-center"
           style={{ perspective: `${perspectivePx}px` }}
         >
-          <AnimatePresence initial={false}>
-            {items.map((item, i) => {
-              const off = signedOffset(i, active, len, loop)
-              const abs = Math.abs(off)
-              const visible = abs <= maxOffset
-              if (!visible) return null
+          {visibleCards.map(({ item, off }) => {
+            const abs = Math.abs(off);
+            const rotateZ = off * stepDeg;
+            const x = off * cardSpacing;
+            const y = abs * 10;
+            const z = -abs * depthPx;
+            const isActive = off === 0;
+            const scale = isActive ? activeScale : inactiveScale;
+            const lift = isActive ? -activeLiftPx : 0;
+            const rotateX = isActive ? 0 : tiltXDeg;
+            const zIndex = isActive ? 200 : 100 - abs;
 
-              const rotateZ = off * stepDeg
-              const x = off * cardSpacing
-              const y = abs * 10
-              const z = -abs * depthPx
-              const isActive = off === 0
-              const scale = isActive ? activeScale : inactiveScale
-              const lift = isActive ? -activeLiftPx : 0
-              const rotateX = isActive ? 0 : tiltXDeg
-              // ── 瞬时层级：活跃卡片 z-index 直接拉到 200，不经过动画插值 ──
-              const zIndex = isActive ? 200 : 100 - abs
-
-              const dragProps = isActive
-                ? {
-                    drag: 'x' as const,
-                    dragConstraints: { left: 0, right: 0 },
-                    dragElastic: 0.22,
-                    onDragEnd: (
-                      _e: any,
-                      info: { offset: { x: number }; velocity: { x: number } },
-                    ) => {
-                      if (reduceMotion) return
-                      const travel = info.offset.x
-                      const v = info.velocity.x
-                      const threshold = Math.min(120, cardWidth * 0.18)
-                      // 降低速度阈值，更容易触发惯性滑动
-                      const velocityThreshold = 400
-                      if (travel > threshold || v > velocityThreshold) prev()
-                      else if (travel < -threshold || v < -velocityThreshold) next()
-                    },
-                  }
-                : {}
-
-              return (
-                <motion.div
-                  key={item.id}
-                  className={cn(
-                    'absolute bottom-0 rounded-2xl overflow-hidden shadow-xl',
-                    'select-none',
-                    isActive ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer',
-                  )}
+            return (
+              <motion.div
+                key={item.id}
+                className="absolute bottom-0 rounded-2xl overflow-hidden shadow-xl select-none pointer-events-none"
+                style={{
+                  width: cardWidth,
+                  height: cardHeight,
+                  zIndex,
+                  transformStyle: "preserve-3d",
+                  backfaceVisibility: "hidden",
+                  willChange: "transform",
+                }}
+                initial={
+                  reduceMotion
+                    ? false
+                    : { opacity: 0, y: y + 40, x, rotateZ, rotateX, scale }
+                }
+                animate={{
+                  opacity: 1,
+                  x,
+                  y: y + lift,
+                  rotateZ,
+                  rotateX,
+                  scale,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: isActive
+                    ? springStiffness * 1.3
+                    : springStiffness * 0.8,
+                  damping: isActive ? springDamping : springDamping * 1.15,
+                  mass: isActive ? 0.7 : 0.9,
+                }}
+              >
+                <div
+                  className="h-full w-full"
                   style={{
-                    width: cardWidth,
-                    height: cardHeight,
-                    zIndex,
-                    transformStyle: 'preserve-3d',
-                    backfaceVisibility: 'hidden' as const,
-                    willChange: 'transform',
-                    pointerEvents: isActive ? 'none' : 'auto',
+                    transform: `translateZ(${z}px)`,
+                    transformStyle: "preserve-3d",
                   }}
-                  initial={
-                    reduceMotion ? false : { opacity: 0, y: y + 40, x, rotateZ, rotateX, scale }
-                  }
-                  animate={{
-                    opacity: 1,
-                    x,
-                    y: y + lift,
-                    rotateZ,
-                    rotateX,
-                    scale,
-                  }}
-                  transition={{
-                    // 弹簧动力学：活跃卡片高刚度快速到位，背景卡片稍慢跟随
-                    type: 'spring',
-                    stiffness: isActive ? springStiffness * 1.3 : springStiffness * 0.8,
-                    damping: isActive ? springDamping : springDamping * 1.15,
-                    mass: isActive ? 0.7 : 0.9,
-                  }}
-                  onClick={() => {
-                    if (off > 0) next()
-                    else if (off < 0) prev()
-                  }}
-                  {...dragProps}
                 >
-                  <div
-                    className="h-full w-full"
-                    style={{
-                      transform: `translateZ(${z}px)`,
-                      transformStyle: 'preserve-3d',
-                    }}
-                  >
-                    {renderCard ? (
-                      renderCard(item, { active: isActive })
-                    ) : (
-                      <DefaultFanCard item={item} active={isActive} />
-                    )}
-                  </div>
-                </motion.div>
-              )
-            })}
-          </AnimatePresence>
+                  {renderCard ? (
+                    renderCard(item, { active: isActive })
+                  ) : (
+                    <DefaultFanCard item={item} />
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
 
@@ -292,18 +283,20 @@ export function CardStack<T extends CardStackItem>({
         <div className="mt-6 flex items-center justify-center gap-3">
           <div className="flex items-center gap-2">
             {items.map((it, idx) => {
-              const on = idx === active
+              const on = idx === active;
               return (
                 <button
                   key={it.id}
                   onClick={() => goToIndex(idx)}
                   className={cn(
-                    'h-2 w-2 rounded-full transition',
-                    on ? 'bg-foreground' : 'bg-foreground/30 hover:bg-foreground/50',
+                    "h-2 w-2 rounded-full transition",
+                    on
+                      ? "bg-foreground"
+                      : "bg-foreground/30 hover:bg-foreground/50",
                   )}
                   aria-label={`Go to ${it.title}`}
                 />
-              )
+              );
             })}
           </div>
           {activeItem.href ? (
@@ -320,10 +313,10 @@ export function CardStack<T extends CardStackItem>({
         </div>
       ) : null}
     </div>
-  )
+  );
 }
 
-function DefaultFanCard({ item }: { item: CardStackItem; active: boolean }) {
+function DefaultFanCard({ item }: { item: CardStackItem }) {
   return (
     <div className="relative h-full w-full">
       <div className="absolute inset-0">
@@ -341,13 +334,17 @@ function DefaultFanCard({ item }: { item: CardStackItem; active: boolean }) {
           </div>
         )}
       </div>
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
       <div className="relative z-10 flex h-full flex-col justify-end p-5">
-        <div className="truncate text-lg font-semibold text-white">{item.title}</div>
+        <div className="truncate text-lg font-semibold text-white">
+          {item.title}
+        </div>
         {item.description ? (
-          <div className="mt-1 line-clamp-2 text-sm text-white/80">{item.description}</div>
+          <div className="mt-1 line-clamp-2 text-sm text-white/80">
+            {item.description}
+          </div>
         ) : null}
       </div>
     </div>
-  )
+  );
 }
