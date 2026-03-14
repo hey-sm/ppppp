@@ -7,23 +7,23 @@
 // 2. 创建 PerfMonitor 实例，订阅性能数据
 // 3. 渲染 React 应用
 //
-// 为什么在 main.tsx 而不是组件中初始化？
-// - Logger 和 PerfMonitor 是全局单例，在应用最早期初始化
-// - 组件可能被卸载重挂载，但 SDK 应该保持运行
-// - 在 main.tsx 初始化可以捕获页面加载阶段的日志和性能数据
+// 为什么在 main.tsx 而不是组件里初始化？
+// - Logger 和 PerfMonitor 是全局单例，应该尽早启动
+// - 组件可能被卸载重挂，但 SDK 应持续运行
+// - 在入口初始化可以尽量捕获页面加载阶段的日志和性能数据
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "@tanstack/react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { router } from "./router";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { useLogStore } from "./stores/logStore";
 import { usePerfStore } from "./stores/perfStore";
 import "./i18n/i18n";
 import "./index.css";
-import "@fluxp/ui/styles.css";
 
-// ── 自研 SDK 引入 ──
+// 自研 SDK 引入
 import {
   createLogger,
   FetchInterceptor,
@@ -33,7 +33,7 @@ import {
 } from "@fluxp/logger-sdk";
 import { createPerfMonitor } from "@fluxp/perf-monitor";
 
-// ── 1. 初始化 Logger SDK ──
+// 1. 初始化 Logger SDK
 // 注册所有中间件，日志输出到 Zustand store
 const logger = createLogger({
   middlewares: [
@@ -43,7 +43,7 @@ const logger = createLogger({
     new ErrorBoundary(), // 自动捕获未处理错误
   ],
   onLog: (entry) => {
-    // 每条日志推送到 Zustand store → DevTools 浮窗实时渲染
+    // 每条日志推送到 Zustand store，供 DevTools 面板实时消费
     useLogStore.getState().addLog(entry);
   },
   minLevel: "info",
@@ -55,7 +55,7 @@ logger.info("Application initialized", {
   userAgent: navigator.userAgent,
 });
 
-// ── 2. 初始化 Perf Monitor SDK ──
+// 2. 初始化 Perf Monitor SDK
 const perfMonitor = createPerfMonitor({
   enableFPS: true,
   enableMemory: true,
@@ -63,21 +63,33 @@ const perfMonitor = createPerfMonitor({
   throttleInterval: 1000,
 });
 
-// 订阅性能数据，推送到 Zustand store → Dashboard 页面实时渲染
+// 订阅性能数据，推送到 Zustand store
 perfMonitor.subscribe((metrics) => {
   usePerfStore.getState().updateMetrics(metrics);
 });
 
-// ── 3. 渲染 React 应用 ──
+// 3. 初始化 React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// 4. 渲染 React 应用
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </QueryClientProvider>
   </StrictMode>,
 );
 
-// ── 清理（SPA 卸载时，如 HMR 热更新） ──
+// 清理：SPA 卸载时（比如 HMR 热更新）
 if (import.meta.hot) {
   import.meta.hot.dispose(() => {
     logger.destroy();

@@ -15,8 +15,7 @@
     "./types": {
       "import": "./dist/index.types.js",
       "types": "./dist/index.types.d.ts"
-    },
-    "./styles.css": "./dist/index.css"
+    }
   },
   "scripts": {
     "build": "tsup",

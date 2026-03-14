@@ -1,33 +1,49 @@
 // ============================================================================
-// UI Lab 布局：左侧组件导航 + 右侧 <Outlet /> 渲染子路由
+// UI Lab 布局：左侧组件导�?+ 右侧 <Outlet /> 渲染子路�?
 //
-// 集成说明：
-//   本文件作为 /ui-lab 的布局路由组件，在 router.tsx 中注册为 uiLabRoute 的 component。
-//   每个组件 Demo（Schedule / VirtualList）各自是一个子路由，
-//   挂载在 /ui-lab/:componentId 下，通过 <Outlet /> 渲染到右侧区域。
-//   左侧导航使用 TanStack Router 的 <Link> 实现，点击时浏览器 URL 同步变化，
-//   支持直接通过 URL 访问特定组件（如 /ui-lab/schedule）。
+// 集成说明�?
+//   本文件作�?/ui-lab 的布局路由组件，在 router.tsx 中注册为 uiLabRoute �?component�?
+//   每个组件 Demo（Schedule / VirtualList）各自是一个子路由�?
+//   挂载�?/ui-lab/:componentId 下，通过 <Outlet /> 渲染到右侧区域�?
+//   左侧导航使用 TanStack Router �?<Link> 实现，点击时浏览�?URL 同步变化�?
+//   支持直接通过 URL 访问特定组件（如 /ui-lab/schedule）�?
 // ============================================================================
 
-import { Link, Outlet } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
-import { cn } from '@/lib/utils'
+import { Link, Outlet } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { to: '/ui-lab/schedule' as const, labelKey: 'uiLab.schedule.name', descKey: 'uiLab.schedule.description' },
-  { to: '/ui-lab/virtual-list' as const, labelKey: 'uiLab.virtualList.name', descKey: 'uiLab.virtualList.description' },
-]
+  {
+    to: "/ui-lab/schedule" as const,
+    labelKey: "uiLab.schedule.name",
+  },
+  {
+    to: "/ui-lab/region-tree" as const,
+    labelKey: "uiLab.regionTree.name",
+  },
+  {
+    to: "/ui-lab/virtual-list" as const,
+    labelKey: "uiLab.virtualList.name",
+  },
+  {
+    to: "/ui-lab/china-division-tree" as const,
+    labelKey: "uiLab.chinaDivisionTree.name",
+  },
+];
 
 export function UILabLayout() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <div className="flex h-screen">
       {/* ── 左侧组件导航 ── */}
       <aside className="w-64 shrink-0 border-r border-border bg-muted/30 overflow-y-auto">
         <div className="p-4 border-b border-border">
-          <h1 className="text-lg font-bold">{t('uiLab.title')}</h1>
-          <p className="text-xs text-muted-foreground mt-1">{t('uiLab.subtitle')}</p>
+          <h1 className="text-lg font-bold">{t("uiLab.title")}</h1>
+          <p className="text-xs text-muted-foreground mt-1">
+            {t("uiLab.subtitle")}
+          </p>
         </div>
         <nav className="p-2 flex flex-col gap-1">
           {NAV_ITEMS.map((item) => (
@@ -35,21 +51,13 @@ export function UILabLayout() {
               {({ isActive }) => (
                 <div
                   className={cn(
-                    'w-full text-left rounded-md px-3 py-2.5 transition-colors',
+                    "w-full text-left rounded-md px-3 py-2.5 transition-colors border-b-2 border-primary",
                     isActive
-                      ? 'bg-primary text-primary-foreground'
-                      : 'hover:bg-accent text-foreground',
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-accent text-foreground",
                   )}
                 >
                   <div className="font-medium text-sm">{t(item.labelKey)}</div>
-                  <div
-                    className={cn(
-                      'text-xs mt-0.5 line-clamp-2',
-                      isActive ? 'text-primary-foreground/70' : 'text-muted-foreground',
-                    )}
-                  >
-                    {t(item.descKey)}
-                  </div>
                 </div>
               )}
             </Link>
@@ -58,9 +66,10 @@ export function UILabLayout() {
       </aside>
 
       {/* ── 右侧 Demo 区域（由子路由填充） ── */}
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 overflow-y-auto p-8 pb-24">
         <Outlet />
       </main>
     </div>
-  )
+  );
 }
+

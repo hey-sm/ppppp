@@ -9,85 +9,155 @@
  * 所有颜色使用 oklch 色彩空间（更准确的感知均匀性）
  */
 
-/* ── Google Fonts（必须在最前面） ── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
 
-@import 'tailwindcss';
-@import 'tw-animate-css';
+/* ── Geist Pixel Fonts ── */
+@font-face {
+  font-family: 'GeistPixelSquare';
+  src: url('../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Square.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'GeistPixelGrid';
+  src: url('../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Grid.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'GeistPixelCircle';
+  src: url('../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Circle.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'GeistPixelTriangle';
+  src: url('../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Triangle.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'GeistPixelLine';
+  src: url('../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Line.woff2') format('woff2');
+  font-display: swap;
+}
+
+@source '../../../packages/ui/src/**/*.{ts,tsx}';
 
 @custom-variant dark (&:is(.dark *));
 
 /*
- * shadcn/ui Zinc 主题 CSS 变量
+ * shadcn/ui Slate 主题 CSS 变量
  * 使用 oklch 色彩空间，支持 light / dark 无缝切换
  */
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.714);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: oklch(98.4% 0.003 247.858);
+  --foreground: oklch(20.8% 0.042 265.755);
+  --card: oklch(100% 0 0);
+  --card-foreground: oklch(20.8% 0.042 265.755);
+  --popover: oklch(100% 0 0);
+  --popover-foreground: oklch(20.8% 0.042 265.755);
+  --primary: oklch(20.8% 0.042 265.755);
+  --primary-foreground: oklch(98.4% 0.003 247.858);
+  --primary-hover: oklch(27.9% 0.041 260.031);
+  --secondary: oklch(96.8% 0.007 247.896);
+  --secondary-foreground: oklch(20.8% 0.042 265.755);
+  --secondary-hover: oklch(92.9% 0.013 255.508);
+  --muted: oklch(96.8% 0.007 247.896);
+  --muted-foreground: oklch(44.6% 0.043 257.281);
+  --accent: oklch(96.8% 0.007 247.896);
+  --accent-foreground: oklch(20.8% 0.042 265.755);
+  --ghost-hover: oklch(96.8% 0.007 247.896);
+  --destructive: oklch(37.2% 0.044 257.287);
+  --destructive-foreground: oklch(98.4% 0.003 247.858);
+  --destructive-hover: oklch(27.9% 0.041 260.031);
+  --border: oklch(92.9% 0.013 255.508);
+  --input: oklch(92.9% 0.013 255.508);
+  --ring: oklch(70.4% 0.04 256.788);
+  --selection: oklch(37.2% 0.044 257.287);
+  --selection-foreground: oklch(98.4% 0.003 247.858);
+  --selection-hover: color-mix(
+    in srgb,
+    oklch(37.2% 0.044 257.287) 26%,
+    transparent
+  );
+  --chart-1: oklch(55.4% 0.046 257.417);
+  --chart-2: oklch(44.6% 0.043 257.281);
+  --chart-3: oklch(37.2% 0.044 257.287);
+  --chart-4: oklch(70.4% 0.04 256.788);
+  --chart-5: oklch(27.9% 0.041 260.031);
+  --sidebar: oklch(100% 0 0);
+  --sidebar-foreground: oklch(20.8% 0.042 265.755);
+  --sidebar-primary: oklch(20.8% 0.042 265.755);
+  --sidebar-primary-foreground: oklch(98.4% 0.003 247.858);
+  --sidebar-accent: oklch(96.8% 0.007 247.896);
+  --sidebar-accent-foreground: oklch(20.8% 0.042 265.755);
+  --sidebar-border: oklch(92.9% 0.013 255.508);
+  --sidebar-ring: oklch(70.4% 0.04 256.788);
+  --surface-shadow: 0 18px 48px rgba(15, 23, 42, 0.1);
+  --status-info: oklch(55.4% 0.046 257.417);
+  --status-warn: oklch(37.2% 0.044 257.287);
+  --status-good: oklch(44.6% 0.043 257.281);
+  --status-poor: oklch(20.8% 0.042 265.755);
+  --hero-start: oklch(98.4% 0.003 247.858);
+  --hero-mid-1: oklch(92.9% 0.013 255.508);
+  --hero-mid-2: oklch(86.9% 0.022 252.894);
+  --hero-end: oklch(98.4% 0.003 247.858);
+  --ripple-color: oklch(44.6% 0.043 257.281 / 0.28);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  --background: oklch(12.9% 0.042 264.695);
+  --foreground: oklch(98.4% 0.003 247.858);
+  --card: oklch(20.8% 0.042 265.755);
+  --card-foreground: oklch(98.4% 0.003 247.858);
+  --popover: oklch(20.8% 0.042 265.755);
+  --popover-foreground: oklch(98.4% 0.003 247.858);
+  --primary: oklch(98.4% 0.003 247.858);
+  --primary-foreground: oklch(20.8% 0.042 265.755);
+  --primary-hover: oklch(92.9% 0.013 255.508);
+  --secondary: oklch(27.9% 0.041 260.031);
+  --secondary-foreground: oklch(98.4% 0.003 247.858);
+  --secondary-hover: oklch(37.2% 0.044 257.287);
+  --muted: oklch(27.9% 0.041 260.031);
+  --muted-foreground: oklch(70.4% 0.04 256.788);
+  --accent: oklch(27.9% 0.041 260.031);
+  --accent-foreground: oklch(98.4% 0.003 247.858);
+  --ghost-hover: oklch(27.9% 0.041 260.031);
+  --destructive: oklch(92.9% 0.013 255.508);
+  --destructive-foreground: oklch(20.8% 0.042 265.755);
+  --destructive-hover: oklch(86.9% 0.022 252.894);
+  --border: oklch(37.2% 0.044 257.287);
+  --input: oklch(37.2% 0.044 257.287);
+  --ring: oklch(55.4% 0.046 257.417);
+  --selection: oklch(55.4% 0.046 257.417);
+  --selection-foreground: oklch(98.4% 0.003 247.858);
+  --selection-hover: color-mix(
+    in srgb,
+    oklch(55.4% 0.046 257.417) 26%,
+    transparent
+  );
+  --chart-1: oklch(70.4% 0.04 256.788);
+  --chart-2: oklch(86.9% 0.022 252.894);
+  --chart-3: oklch(92.9% 0.013 255.508);
+  --chart-4: oklch(55.4% 0.046 257.417);
+  --chart-5: oklch(44.6% 0.043 257.281);
+  --sidebar: oklch(20.8% 0.042 265.755);
+  --sidebar-foreground: oklch(98.4% 0.003 247.858);
+  --sidebar-primary: oklch(55.4% 0.046 257.417);
+  --sidebar-primary-foreground: oklch(98.4% 0.003 247.858);
+  --sidebar-accent: oklch(27.9% 0.041 260.031);
+  --sidebar-accent-foreground: oklch(98.4% 0.003 247.858);
+  --sidebar-border: oklch(37.2% 0.044 257.287);
+  --sidebar-ring: oklch(55.4% 0.046 257.417);
+  --surface-shadow: 0 22px 60px rgba(2, 6, 23, 0.45);
+  --status-info: oklch(70.4% 0.04 256.788);
+  --status-warn: oklch(92.9% 0.013 255.508);
+  --status-good: oklch(86.9% 0.022 252.894);
+  --status-poor: oklch(98.4% 0.003 247.858);
+  --hero-start: oklch(12.9% 0.042 264.695);
+  --hero-mid-1: oklch(20.8% 0.042 265.755);
+  --hero-mid-2: oklch(27.9% 0.041 260.031);
+  --hero-end: oklch(12.9% 0.042 264.695);
+  --ripple-color: oklch(70.4% 0.04 256.788 / 0.24);
 }
 
 /* ── Tailwind v4 theme 层 ── */
@@ -107,9 +177,16 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-selection: var(--selection);
+  --color-selection-foreground: var(--selection-foreground);
+  --color-status-info: var(--status-info);
+  --color-status-warn: var(--status-warn);
+  --color-status-good: var(--status-good);
+  --color-status-poor: var(--status-poor);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -123,12 +200,18 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --shadow-surface: var(--surface-shadow);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+  --font-pixel-square: "GeistPixelSquare";
+  --font-pixel-grid: "GeistPixelGrid";
+  --font-pixel-circle: "GeistPixelCircle";
+  --font-pixel-triangle: "GeistPixelTriangle";
+  --font-pixel-line: "GeistPixelLine";
 }
 
 /* ── 全局基础样式 ── */
@@ -168,200 +251,10 @@ body {
 }
 
 /* ── DevTools 浮窗样式 ── */
-.devtools-panel {
-  position: fixed;
-  bottom: 3.5rem;
-  right: 1.5rem;
-  width: 520px;
-  max-height: 440px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  z-index: 998;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
-}
-.dark .devtools-panel {
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
-}
-.devtools-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--muted);
-  flex-shrink: 0;
-}
-.devtools-logs {
-  padding: 0.375rem;
-  flex: 1;
-  overflow-y: auto;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  line-height: 1.5;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
 /* 日志条目：双行布局（元数据行 + 消息行），左侧彩色边框 */
-.devtools-log-entry {
-  padding: 0.375rem 0.5rem;
-  border-radius: var(--radius-sm);
-  border-left: 3px solid transparent;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.devtools-log-entry:hover {
-  background: var(--accent);
-}
 /* 元数据行：图标 + 分类 + 时间 */
-.log-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  font-size: 0.7rem;
-  color: var(--muted-foreground);
-}
-.log-level-icon {
-  width: 12px;
-  height: 12px;
-  flex-shrink: 0;
-}
 /* 消息行：允许换行，缩进对齐 */
-.log-message {
-  padding-left: 1.125rem;
-  word-break: break-word;
-  white-space: pre-wrap;
-}
-.log-time {
-  margin-left: auto;
-}
-.log-category {
-  display: inline-block;
-  padding: 0.05rem 0.35rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.65rem;
-  background: var(--secondary);
-  color: var(--secondary-foreground);
-}
 /* 日志等级样式：左侧彩色边框 + 图标着色 + warn/error 背景提示 */
-.log-info {
-  border-left-color: oklch(0.6 0.118 184.714);
-}
-.log-info .log-level-icon {
-  color: oklch(0.6 0.118 184.714);
-}
-.log-warn {
-  border-left-color: oklch(0.828 0.189 84.429);
-  background: oklch(0.828 0.189 84.429 / 0.05);
-}
-.log-warn .log-level-icon {
-  color: oklch(0.828 0.189 84.429);
-}
-.log-error {
-  border-left-color: oklch(0.577 0.245 27.325);
-  background: oklch(0.577 0.245 27.325 / 0.08);
-}
-.log-error .log-level-icon {
-  color: oklch(0.577 0.245 27.325);
-}
-.log-debug {
-  border-left-color: var(--muted-foreground);
-}
-.log-debug .log-level-icon {
-  color: var(--muted-foreground);
-}
-
-/* ── Dashboard 指标卡片 ── */
-.metric-value {
-  font-size: 2rem;
-  font-weight: 700;
-  font-family: var(--font-mono);
-}
-.metric-good {
-  color: oklch(0.723 0.191 149.58);
-}
-.metric-warn {
-  color: oklch(0.828 0.189 84.429);
-}
-.metric-poor {
-  color: oklch(0.577 0.245 27.325);
-}
-
-/* ── Hero 区域渐变动画 ── */
-@keyframes gradient-shift {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-.hero-gradient {
-  background: linear-gradient(
-    -45deg,
-    var(--background),
-    oklch(0.3 0.02 260),
-    oklch(0.25 0.03 220),
-    var(--background)
-  );
-  background-size: 400% 400%;
-  animation: gradient-shift 12s ease infinite;
-}
-.dark .hero-gradient {
-  background: linear-gradient(
-    -45deg,
-    oklch(0.145 0 0),
-    oklch(0.2 0.02 260),
-    oklch(0.17 0.03 220),
-    oklch(0.145 0 0)
-  );
-  background-size: 400% 400%;
-  animation: gradient-shift 12s ease infinite;
-}
-
-/* ── CardStack 活跃卡片水波纹 ── */
-@keyframes ripple-expand {
-  0% {
-    transform: translate(-50%, -50%) scale(0.3);
-    opacity: 0.5;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(2.5);
-    opacity: 0;
-  }
-}
-.ripple-ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  border: 2px solid currentColor;
-  color: oklch(0.6 0.05 260 / 0.3);
-  pointer-events: none;
-  z-index: 5;
-  animation: ripple-expand 3s ease-out infinite;
-  /* 依赖父容器 overflow-hidden 裁剪，移除 clip-path 避免半圆问题 */
-}
-.dark .ripple-ring {
-  color: oklch(0.7 0.05 260 / 0.25);
-}
-.ripple-ring-1 {
-  animation-delay: 0s;
-}
-.ripple-ring-2 {
-  animation-delay: 1s;
-}
-.ripple-ring-3 {
-  animation-delay: 2s;
-}
 
 /* ── 防止横向滚动条 ── */
 html,

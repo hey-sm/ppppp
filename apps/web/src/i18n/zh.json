@@ -1,8 +1,9 @@
 {
   "nav": {
     "home": "首页",
-    "uiLab": "组件实验室",
-    "dashboard": "性能大盘",
+    "uiLab": "组件 @fluxp/ui",
+    "dashboard": "性能监控",
+    "links": "Links",
     "brand": "fluxp"
   },
   "theme": {
@@ -21,7 +22,7 @@
     "heroSubtitle": "滑动浏览色卡"
   },
   "uiLab": {
-    "title": "组件实验室",
+    "title": "组件 @fluxp/ui",
     "subtitle": "来自 @fluxp/ui 的自研组件展示，点击卡片查看在线演示",
     "liveDemo": "在线演示",
     "virtualList": {
@@ -41,6 +42,17 @@
       "selectedOutput": "已选时间段数据",
       "clear": "清空选择"
     },
+    "regionTree": {
+      "name": "地域选择器",
+      "description": "省市两级树形选择，支持全选省份、半选态与已选列表管理",
+      "demoHint": "展开省份并勾选省/市，右侧可查看已选并单项删除",
+      "selectedOutput": "已选地域数据"
+    },
+    "chinaDivisionTree": {
+      "name": "省市区街道树",
+      "description": "基于 province-city-china 的 data.min.json，全量到街道的数据浏览（搜索 + 展开）",
+      "demoHint": "默认虚拟渲染。可在顶部搜索名称，点击箭头展开层级。"
+    },
     "tags": {
       "perfOptimization": "性能优化",
       "virtualScroll": "虚拟滚动",
@@ -50,7 +62,9 @@
       "dataValidation": "数据校验",
       "adSchedule": "广告排期",
       "dragSelect": "拖拽选择",
-      "weeklyGrid": "周视图"
+      "weeklyGrid": "周视图",
+      "treeSelect": "树形选择",
+      "provinceCity": "省市数据"
     },
     "form": {
       "username": "用户名",
@@ -77,12 +91,12 @@
     "usedHeap": "已用堆内存",
     "totalHeap": "总堆内存",
     "heapLimit": "堆上限",
-    "renderBattle": "渲染性能对比",
+    "renderBattle": "全量树结构展开",
     "items": "条数据",
     "normal": "普通渲染",
     "virtual": "虚拟渲染",
-    "modeNormal": "普通渲染 (渲染所有 DOM)",
-    "modeVirtual": "虚拟列表 (仅渲染可见区域)",
+    "modeNormal": "普通渲染 (逐步渲染可见节点)",
+    "modeVirtual": "虚拟渲染 (仅渲染可见区域节点)",
     "longTasks": "长任务",
     "detected": "已检测到",
     "good": "良好",

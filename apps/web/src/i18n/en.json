@@ -3,6 +3,7 @@
     "home": "Home",
     "uiLab": "UI Lab",
     "dashboard": "Dashboard",
+    "links": "Links",
     "brand": "fluxp"
   },
   "theme": {
@@ -41,6 +42,17 @@
       "selectedOutput": "Selected time slot data",
       "clear": "Clear"
     },
+    "regionTree": {
+      "name": "Region Selector",
+      "description": "Two-level province/city tree with full-select province, indeterminate state, and selected list management",
+      "demoHint": "Expand provinces and select province/city. Remove selections from the right panel.",
+      "selectedOutput": "Selected region data"
+    },
+    "chinaDivisionTree": {
+      "name": "China Division Tree",
+      "description": "Browse full province-city-area-town data from province-city-china data.min.json (search + expand)",
+      "demoHint": "Virtual rendering by default. Search by name and expand nodes to navigate the hierarchy."
+    },
     "tags": {
       "perfOptimization": "Performance",
       "virtualScroll": "Virtual Scroll",
@@ -50,7 +62,9 @@
       "dataValidation": "Validation",
       "adSchedule": "Ad Schedule",
       "dragSelect": "Drag Select",
-      "weeklyGrid": "Weekly Grid"
+      "weeklyGrid": "Weekly Grid",
+      "treeSelect": "Tree Select",
+      "provinceCity": "Province/City Data"
     },
     "form": {
       "username": "Username",
@@ -81,8 +95,8 @@
     "items": "items",
     "normal": "Normal",
     "virtual": "Virtual",
-    "modeNormal": "Normal Rendering (all DOM)",
-    "modeVirtual": "Virtual List (visible area only)",
+    "modeNormal": "Normal Rendering (progressive visible nodes)",
+    "modeVirtual": "Virtual Rendering (visible nodes only)",
     "longTasks": "Long Tasks",
     "detected": "detected",
     "good": "Good",

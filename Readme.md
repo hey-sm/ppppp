@@ -82,7 +82,7 @@ cd apps/web && pnpm dlx shadcn@latest add <component>
 ```typescript
 import { Button, VirtualList, MSchedule } from "@fluxp/ui"; // 运行时
 import type { ButtonProps, MScheduleValue } from "@fluxp/ui/types"; // 仅类型
-import "@fluxp/ui/styles.css"; // 组件样式
+// 主题与 Tailwind 全局入口统一在 apps/web/src/index.css 管理
 ```
 
 ---

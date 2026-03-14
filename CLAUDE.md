@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+Chat with me in Chinese.
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Commands
@@ -36,7 +38,7 @@ cd apps/web && pnpm dlx shadcn@latest add <component>
 | Package                                         | Purpose                                                                                               | Build        |
 | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------ |
 | `apps/web` (`@fluxp/web`)                       | Vite + React 19 SPA                                                                                   | `vite`       |
-| `packages/ui` (`@fluxp/ui`)                     | Component library (Button, VirtualList, MSchedule) — CSS self-contained                              | `tsup` → ESM |
+| `packages/ui` (`@fluxp/ui`)                     | Component library (Button, VirtualList, MSchedule) — CSS self-contained                               | `tsup` → ESM |
 | `packages/logger-sdk` (`@fluxp/logger-sdk`)     | Log collection with middleware plugins (FetchInterceptor, RouterTracker, ClickTracker, ErrorBoundary) | `tsup` → ESM |
 | `packages/perf-monitor` (`@fluxp/perf-monitor`) | Web Vitals, FPS, Memory, Long Tasks monitoring                                                        | `tsup` → ESM |
 
@@ -55,16 +57,17 @@ Both SDKs initialize in `apps/web/src/main.tsx` before React renders. Logger use
 
 ### Component Library (`@fluxp/ui`)
 
-Pure React components, no runtime deps. Peer deps: React 19. Each component supports both controlled and uncontrolled modes. CSS is self-contained (BEM naming with `fluxp-` prefix). Built with tsup to ESM + `.d.ts` + CSS.
+Pure React components, no runtime deps. Peer deps: React 19. Each component supports both controlled and uncontrolled modes. Theme tokens come from the app entry CSS, and the package is built with tsup to ESM + `.d.ts`.
 
 Three export paths:
+
 ```ts
-import { Button, VirtualList, MSchedule } from '@fluxp/ui'       // runtime
-import type { ButtonProps, MScheduleValue } from '@fluxp/ui/types' // types only
-import '@fluxp/ui/styles.css'                                      // component CSS
+import { Button, VirtualList, MSchedule } from "@fluxp/ui"; // runtime
+import type { ButtonProps, MScheduleValue } from "@fluxp/ui/types"; // types only
+// theme tokens are defined once in apps/web/src/index.css
 ```
 
-Turbo `dev` task has `"dependsOn": ["^build"]` — packages are built before the web app starts. CSS lives in `packages/ui/src/components/*.css`, co-located with each component.
+Turbo `dev` task has `"dependsOn": ["^build"]` — packages are built before the web app starts. Global theme tokens live in `apps/web/src/index.css`, while package utility CSS is imported from the app entry when needed.
 
 ## Code Style
 

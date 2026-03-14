@@ -1,3 +1,33 @@
+// ============================================================================
+// CardStack — 3D 扇形卡片轮播组件
+// ============================================================================
+//
+// 布局模型：
+//   所有卡片绝对定位在同一容器中，通过 CSS transform 实现扇形展开。
+//   每张卡片根据与 active 的偏移量 (signedOffset) 计算：
+//   - x 位移（水平扇开）、rotateZ（旋转角度）、rotateX（倾斜）
+//   - scale（缩放）、y（下沉）、translateZ（纵深）
+//   超出 maxVisible 范围的卡片不渲染（return null）。
+//
+// 动画引擎：
+//   framer-motion spring 弹簧动画，天然支持**动画中断**——
+//   切换时不等上一帧完成，直接从当前物理位置起跳到新目标。
+//   活跃卡片用高 stiffness / 低 mass（快速到位），
+//   背景卡片用低 stiffness / 高 damping（柔和跟随，形成层次感）。
+//
+// 快速点击不卡顿的三个关键：
+//   1. 函数式 setState：prev/next 用 setActive(cur => ...) 而非闭包值，
+//      React 批量更新时每次都基于最新 state，不吃操作。
+//   2. 方向点击：非活跃卡片 onClick 只看 offset 正负调 next/prev，
+//      不跳到具体索引，避免动画中点到"逻辑上已变 active"的旧卡片。
+//   3. 事件穿透：活跃卡片 pointer-events:none，点击穿透到后方卡片，
+//      即使新 active 卡片视觉上还在飞过来也不会拦截事件。
+//
+// z-index 策略：
+//   活跃卡片直接设 200（非动画属性，React 渲染即生效），
+//   其余卡片 100 - abs(offset)，保证切换瞬间层级正确。
+// ============================================================================
+
 import * as React from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { SquareArrowOutUpRight } from 'lucide-react'
@@ -96,10 +126,7 @@ export function CardStack<T extends CardStackItem>({
   const cardSpacing = Math.max(10, Math.round(cardWidth * (1 - overlap)))
   const stepDeg = maxOffset > 0 ? spreadDeg / maxOffset : 0
 
-  const canGoPrev = loop || active > 0
-  const canGoNext = loop || active < len - 1
-
-  // 直接切换，framer-motion 会自动取消进行中的动画
+  // ── 函数式更新：每次调用都基于最新 state，快速连点不会吃掉操作 ──
   const goToIndex = React.useCallback(
     (newIndex: number) => {
       if (!len) return
@@ -109,14 +136,18 @@ export function CardStack<T extends CardStackItem>({
   )
 
   const prev = React.useCallback(() => {
-    if (!canGoPrev) return
-    goToIndex(active - 1)
-  }, [canGoPrev, active, goToIndex])
+    setActive((cur) => {
+      if (!loop && cur <= 0) return cur
+      return wrapIndex(cur - 1, len)
+    })
+  }, [loop, len])
 
   const next = React.useCallback(() => {
-    if (!canGoNext) return
-    goToIndex(active + 1)
-  }, [canGoNext, active, goToIndex])
+    setActive((cur) => {
+      if (!loop && cur >= len - 1) return cur
+      return wrapIndex(cur + 1, len)
+    })
+  }, [loop, len])
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowLeft') prev()
@@ -172,7 +203,8 @@ export function CardStack<T extends CardStackItem>({
               const scale = isActive ? activeScale : inactiveScale
               const lift = isActive ? -activeLiftPx : 0
               const rotateX = isActive ? 0 : tiltXDeg
-              const zIndex = 100 - abs
+              // ── 瞬时层级：活跃卡片 z-index 直接拉到 200，不经过动画插值 ──
+              const zIndex = isActive ? 200 : 100 - abs
 
               const dragProps = isActive
                 ? {
@@ -208,8 +240,9 @@ export function CardStack<T extends CardStackItem>({
                     height: cardHeight,
                     zIndex,
                     transformStyle: 'preserve-3d',
-                    // GPU 加速优化
                     backfaceVisibility: 'hidden' as const,
+                    willChange: 'transform',
+                    pointerEvents: isActive ? 'none' : 'auto',
                   }}
                   initial={
                     reduceMotion ? false : { opacity: 0, y: y + 40, x, rotateZ, rotateX, scale }
@@ -223,12 +256,16 @@ export function CardStack<T extends CardStackItem>({
                     scale,
                   }}
                   transition={{
-                    // 使用弹性动画，支持动画中断
+                    // 弹簧动力学：活跃卡片高刚度快速到位，背景卡片稍慢跟随
                     type: 'spring',
-                    stiffness: springStiffness,
-                    damping: springDamping,
+                    stiffness: isActive ? springStiffness * 1.3 : springStiffness * 0.8,
+                    damping: isActive ? springDamping : springDamping * 1.15,
+                    mass: isActive ? 0.7 : 0.9,
                   }}
-                  onClick={() => goToIndex(i)}
+                  onClick={() => {
+                    if (off > 0) next()
+                    else if (off < 0) prev()
+                  }}
                   {...dragProps}
                 >
                   <div
